@@ -1,13 +1,11 @@
 from pydantic import BaseModel
 
-class ProductBase(BaseModel):
+class ProductCreate(BaseModel):
     productname: str
     price: int
+    company: str
 
-class ProductCreate(ProductBase):
-    pass
-
-class ProductResponse(ProductBase):
+class ProductResponse(ProductCreate):
     id: int
 
     class Config:

@@ -1,4 +1,3 @@
-# main.py
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,9 +27,14 @@ def get_db():
     finally:
         db.close()
 
+
 @app.post("/products/", response_model=ProductResponse)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
-    new_product = Product(productname=product.productname, price=product.price)
+    new_product = Product(
+        productname=product.productname,
+        price=product.price,
+        company=product.company 
+    )
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
