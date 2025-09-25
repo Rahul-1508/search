@@ -1,14 +1,14 @@
-
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Filter from "./Filter";
-import './style.css';
+import "./style.css";
 
 interface Product {
   id: number;
   productname: string;
   price: number;
   company: string;
+  category: string;
 }
 
 const Header: React.FC = () => {
@@ -19,11 +19,13 @@ const Header: React.FC = () => {
 
   const [appliedFilters, setAppliedFilters] = useState({
     company: "",
-    priceRange: [0, 100000],
+    priceRange: [0, 200000] as [number, number],
+    category: "select", // lowercase for consistency
   });
 
   const [cart, setCart] = useState<Product[]>([]);
 
+  // Fetch products
   useEffect(() => {
     fetch("http://127.0.0.1:8000/products/")
       .then((res) => {
@@ -38,23 +40,35 @@ const Header: React.FC = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  // Apply filters
   useEffect(() => {
     const filtered = products.filter((product) => {
       const company = product.company || "";
+
       const inPriceRange =
         product.price >= appliedFilters.priceRange[0] &&
         product.price <= appliedFilters.priceRange[1];
+
       const matchesCompany = company
         .toLowerCase()
         .includes(appliedFilters.company.toLowerCase());
 
-      return inPriceRange && matchesCompany;
+      const matchesCategory =
+        appliedFilters.category.toLowerCase() === "select" ||
+        product.category === appliedFilters.category;
+
+      return inPriceRange && matchesCompany && matchesCategory;
     });
 
     setFilteredProducts(filtered);
   }, [appliedFilters, products]);
 
-  const handleApplyFilters = (filters: { company: string; priceRange: [number, number] }) => {
+  // Handlers
+  const handleApplyFilters = (filters: {
+    company: string;
+    priceRange: [number, number];
+    category: string;
+  }) => {
     setAppliedFilters(filters);
   };
 
@@ -72,14 +86,16 @@ const Header: React.FC = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-4 text-center" style={{ color: "white"}}>
+      <h2 className="mb-4 text-center" style={{ color: "white" }}>
         <u>Product Search</u> 🔍
       </h2>
 
       <div className="row">
-        <div className=" postion col-md-3">
+        {/* Left side: Filters + Cart */}
+        <div className="col-md-3">
           <Filter onFilterChange={handleApplyFilters} />
-          <div className=" cart_container cart-panel border p-3 mt-4 bg-light ">
+
+          <div className="cart_container cart-panel border p-3 mt-4 bg-light">
             <h4>🛒 Cart</h4>
             {cart.length === 0 ? (
               <p className="text-muted">No items added yet</p>
@@ -95,7 +111,7 @@ const Header: React.FC = () => {
                       <small className="text-muted">₹{item.price}</small>
                     </div>
                     <button
-                      className=" cross_btn btn btn-sm btn-danger"
+                      className="cross_btn btn btn-sm btn-danger"
                       onClick={() => handleRemoveFromCart(index)}
                     >
                       ❌
@@ -104,13 +120,14 @@ const Header: React.FC = () => {
                 ))}
               </ul>
             )}
-            <h5>Total: ₹{totalPrice}</h5> 
+            <h5>Total: ₹{totalPrice}</h5>
             <button className="btn btn-success w-100" disabled={cart.length === 0}>
               Checkout
             </button>
           </div>
         </div>
 
+        {/* Right side: Products */}
         <div className="col-md-9">
           <input
             type="text"
@@ -135,6 +152,7 @@ const Header: React.FC = () => {
                         <h5 className="card-title">{product.productname}</h5>
                         <p className="card-text">Price: ₹{product.price}</p>
                         <p className="card-text">Company: {product.company}</p>
+                        <p className="card-text">Category: {product.category}</p>
                         <button
                           className="btn btn-primary w-100"
                           onClick={() => handleAddToCart(product)}

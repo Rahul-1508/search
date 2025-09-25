@@ -8,3 +8,4 @@ class Product(Base):
     productname = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
     company = Column(String, nullable=False) 
+    category = Column(String, nullable=False)

@@ -8,7 +8,7 @@
 .card {
   border: none;
   border-radius: 10px;
-  background-color: rgb(218, 241, 241);
+  background-color: rgb(218, 241, 241); 
   transition: transform 0.2s ease-in-out, box-shadow 0.2s;
 }
 
@@ -27,16 +27,7 @@
   color: #555;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  border: none;
-  width: 100%;
-  font-weight: 500;
-}
 
-.btn-primary:hover {
-  background-color: #0056b3;
-}
 
 input[type="text"].form-control {
   font-size: 1rem;
@@ -48,9 +39,7 @@ input[type="text"].form-control {
   font-style: italic;
   font-size: 1rem;
 }
-.postion{
-  position: relative;
-}
+
 .cart_container {
    background-color: #dbe6f1 !important ;
   border-radius: 8px;
@@ -60,5 +49,9 @@ input[type="text"].form-control {
 
 .cross_btn {
   background-color: transparent !important;
-  border: none !important;            
+  border: none !important;    
+  opacity: 0.5;     
+}
+.cross_btn:hover{
+   opacity: 1;
 }
